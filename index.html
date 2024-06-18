@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Expense Tracker with Calculator</title>
+    <style>
+        body {
+            background-color: purple;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            font-family: Arial, sans-serif;
+        }
+        .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 80%;
+            max-width: 1200px;
+        }
+        .expense-tracker-container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            width: 60%;
+            max-width: 600px;
+        }
+        .calculator-container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            width: 35%;
+            max-width: 400px;
+        }
+        input[type="text"],
+        input[type="number"] {
+            width: calc(100% - 22px); /* Adjusted for padding and border */
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            box-sizing: border-box;
+        }
+        select {
+            width: calc(100% - 22px); /* Adjusted for padding and border */
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            box-sizing: border-box;
+        }
+        .button {
+            width: 100%;
+            padding: 10px;
+            border-radius: 5px;
+            border: none;
+            background-color: purple;
+            color: white;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        .button:hover {
+            background-color: #6a1b9a;
+        }
+        .result-label {
+            font-weight: bold;
+            font-size: 18px;
+            margin-top: 10px;
+            color: purple;
+        }
+        h1 {
+            color: purple;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="expense-tracker-container">
+            <h1>Expense Tracker</h1>
+            <form action="/update" method="post">
+                <label for="name">Name:</label>
+                <input type="text" id="name" name="name" required><br>
+
+                <label for="category">Category:</label>
+                <input type="text" id="category" name="category" required><br>
+
+                <label for="amount">Amount:</label>
+                <input type="number" id="amount" name="amount" required><br>
+
+                <input type="submit" class="button" value="Submit">
+            </form>
+            <h2 id="successMessage" style="display: none;">Data updated successfully!</h2>
+            <form action="/" method="get">
+                <button id="resetButton" class="button" type="submit">Reset</button>
+            </form>
+        </div>
+
+        <div class="calculator-container">
+            <h1>Calculator</h1>
+            <form id="calculatorForm" action="/calculate" method="post">
+                <label for="num1">Number 1:</label>
+                <input type="number" id="num1" name="num1" required><br>
+
+                <label for="operator">Operator:</label>
+                <select id="operator" name="operator" required>
+                    <option value="+">+</option>
+                    <option value="-">-</option>
+                    <option value="*">*</option>
+                    <option value="/">/</option>
+                </select><br>
+
+                <label for="num2">Number 2:</label>
+                <input type="number" id="num2" name="num2" required><br>
+
+                <input type="submit" class="button" value="Calculate">
+            </form>
+            <button id="resultButton" class="button" onclick="displayResult()">Show Result</button>
+            <label class="result-label" id="resultLabel">{{ result }}</label>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const successParam = urlParams.get('success');
+            const resultParam = urlParams.get('result');
+
+            if (successParam === 'true') {
+                document.getElementById('successMessage').style.display = 'block';
+                document.getElementById('resetButton').style.display = 'block';
+            }
+
+            if (resultParam) {
